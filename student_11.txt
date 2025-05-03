@@ -1,0 +1,8 @@
+ID: 11
+Jmeno: Ondra
+Prijmeni: Steffan
+Rok narozeni: 2005
+Znamky: [1, 1]
+Studijni prumer: 1.0
+Typ: telekomunikace
+Skill: --- -. -.. .-. .- ... - . ..-. ..-. .- -.

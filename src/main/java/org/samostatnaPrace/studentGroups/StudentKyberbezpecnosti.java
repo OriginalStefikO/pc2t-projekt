@@ -29,5 +29,16 @@ public class StudentKyberbezpecnosti extends Student {
     public String zpracujSkill() {
         return hashName(jmeno + prijmeni);
     }
+
+    @Override
+    public String toString() {
+        return "StudentKyberbezpecnosti{" +
+                "id=" + id +
+                ", jmeno='" + jmeno + '\'' +
+                ", prijmeni='" + prijmeni + '\'' +
+                ", rokNarozeni=" + rokNarozeni +
+                ", znamky=" + znamky +
+                '}';
+    }
 }
 

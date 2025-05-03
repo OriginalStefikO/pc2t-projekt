@@ -42,4 +42,15 @@ public class StudentTelekomunikaci extends Student {
     public String zpracujSkill() {
         return toMorse(jmeno + " " + prijmeni);
     }
+
+    @Override
+    public String toString() {
+        return "StudentTelekomunikaci{" +
+                "id=" + id +
+                ", jmeno='" + jmeno + '\'' +
+                ", prijmeni='" + prijmeni + '\'' +
+                ", rokNarozeni=" + rokNarozeni +
+                ", znamky=" + znamky +
+                '}';
+    }
 }
