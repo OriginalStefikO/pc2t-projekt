@@ -17,24 +17,30 @@ public abstract class Student {
         this.znamky = new ArrayList<>();
     }
 
-    public int getId() { return id; }
     public void setId(int generatedId) { this.id = generatedId; }
+    public void setJmeno(String jmeno) { this.jmeno = jmeno; }
+    public void setPrijmeni(String prijmeni) { this.prijmeni = prijmeni; }
+    public void setRokNarozeni(int rokNarozeni) { this.rokNarozeni = rokNarozeni; }
+    public void setZnamky(List<Integer> znamky) { this.znamky = znamky; }
+
+    public int getId() { return id; }
     public String getJmeno() { return jmeno; }
     public String getPrijmeni() { return prijmeni; }
     public int getRokNarozeni() { return rokNarozeni; }
     public List<Integer> getZnamky() { return znamky; }
+
+
+    public double getStudijniPrumer() {
+        return znamky.isEmpty() ? 0.0 : znamky.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+    }
+
+    public abstract String zpracujSkill();
 
     public void pridatZnamku(int znamka) {
         if (znamka >= 1 && znamka <= 5) {
             znamky.add(znamka);
         }
     }
-
-    public double getStudijniPrumer() {
-        return znamky.isEmpty() ? 0.0 : znamky.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-    }
-
-    public abstract String zpracujIdentitu();
 
     @Override
     public String toString() {

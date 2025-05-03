@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentRepository {
-    public void pridejStudenta(Student student) {
+    public int pridejStudenta(Student student) {
         String sqlQuery = "INSERT INTO students(jmeno, prijmeni, rokNarozeni, typ) VALUES(?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.connect();
@@ -25,12 +25,16 @@ public class StudentRepository {
                 if (generatedKeys.next()) {
                     int generatedId = generatedKeys.getInt(1);
                     student.setId(generatedId);
+                    System.out.println("Student byl úspěšně přidán s ID: " + generatedId);
+                    return generatedId;
                 }
             }
 
         } catch (SQLException e) {
             System.out.println("Chyba při ukládání studenta: " + e.getMessage());
         }
+        System.out.println("Chyba při přidávání studenta.");
+        return -1;
     }
 
     public Student nactiStudenta(int studentId) {
@@ -72,6 +76,45 @@ public class StudentRepository {
         }
 
         return student;
+    }
+
+    public void upravStudenta(int studentId, String jmeno, String prijmeni, int rokNarozeni) {
+        String sqlQuery = "UPDATE Students SET jmeno = ?, prijmeni = ?, rokNarozeni = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery)) {
+
+            preparedStatement.setString(1, jmeno);
+            preparedStatement.setString(2, prijmeni);
+            preparedStatement.setInt(3, rokNarozeni);
+            preparedStatement.setInt(4, studentId);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Chyba při aktualizaci studenta: " + e.getMessage());
+        }
+    }
+
+    public void upravZnamkyStudenta(int studentId, List<Integer> znamky) {
+        String deleteGrades = "DELETE FROM znamky WHERE student_id = ?";
+        String insertGrades = "INSERT INTO znamky(student_id, znamka) VALUES(?, ?)";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement stmtDelete = conn.prepareStatement(deleteGrades);
+             PreparedStatement stmtInsert = conn.prepareStatement(insertGrades)) {
+
+            stmtDelete.setInt(1, studentId);
+            stmtDelete.executeUpdate();
+
+            for (int znamka : znamky) {
+                stmtInsert.setInt(1, studentId);
+                stmtInsert.setInt(2, znamka);
+                stmtInsert.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Chyba při aktualizaci známek: " + e.getMessage());
+        }
     }
 
     public void smazatStudenta(int studentId) {

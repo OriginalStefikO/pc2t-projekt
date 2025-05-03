@@ -3,6 +3,10 @@ package org.samostatnaPrace;
 import org.samostatnaPrace.studentGroups.StudentKyberbezpecnosti;
 import org.samostatnaPrace.studentGroups.StudentTelekomunikaci;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Controller {
@@ -24,11 +28,11 @@ public class Controller {
                 case 3 -> expelStudent();
                 case 4 -> findStudentById();
                 case 5 -> activateStudentSkill();
-                case 6 -> printSortedStudentsInGroups();
-                case 7 -> printAverageGradesByField();
+                case 6 -> printSortedStudentsByLastName();
+                case 7 -> printAverageGradesOfField();
                 case 8 -> printStudentCountsInGroups();
-//                case 9 -> saveStudentToFile();
-//                case 10 -> loadStudentFromFile();
+                case 9 -> saveStudentToFile();
+                case 10 -> loadStudentFromFile();
                 case 0 -> {
                     System.out.println("Ukončuji program.");
                     return;
@@ -38,35 +42,124 @@ public class Controller {
         }
     }
 
+    private void loadStudentFromFile() {
+        scanner.nextLine();
+        System.out.print("Zadejte název souboru pro načtení studenta: ");
+        String nazevSouboru = scanner.nextLine();
+
+        int studentId = -1;
+        String jmeno = null;
+        String prijmeni = null;
+        int rokNarozeni = -1;
+        List<Integer> znamky = new ArrayList<>();
+        String typ = null;
+
+        try {
+            FileReader fileReader = new FileReader(nazevSouboru);
+            Scanner fileScanner = new Scanner(fileReader);
+
+            while (fileScanner.hasNextLine()) {
+                String[] line = fileScanner.nextLine().split(": ");
+
+                switch (line[0]) {
+                    case "ID" -> studentId = Integer.parseInt(line[1]);
+                    case "Jmeno" -> jmeno = line[1];
+                    case "Prijmeni" -> prijmeni = line[1];
+                    case "Rok narozeni" -> rokNarozeni = Integer.parseInt(line[1]);
+                    case "Znamky" -> {
+                        line[1] = line[1].replace("[", "").replace("]", "");
+                        String[] grades = line[1].split(", ");
+                        for (String grade : grades) {
+                            znamky.add(Integer.parseInt(grade));
+                        }
+                    }
+                    case "Typ" -> typ = line[1];
+                }
+            }
+
+            if (jmeno == null || prijmeni == null || rokNarozeni == -1 || typ == null) {
+                System.out.println("Chyba: Neco z udaju neni spravne.");
+                return;
+            }
+
+            if (studentId != -1) {
+                repository.upravStudenta(studentId, jmeno, prijmeni, rokNarozeni);
+                repository.upravZnamkyStudenta(studentId, znamky);
+                return;
+            }
+
+            if (typ.equals("telekomunikace")) {
+                Student student = new StudentTelekomunikaci(jmeno, prijmeni, rokNarozeni);
+                student.setId(studentId);
+                student.setZnamky(znamky);
+                int addedStudentId = repository.pridejStudenta(student);
+                repository.upravZnamkyStudenta(addedStudentId, znamky);
+            } else if (typ.equals("kyberbezpecnost")) {
+                Student student = new StudentKyberbezpecnosti(jmeno, prijmeni, rokNarozeni);
+                student.setId(studentId);
+                student.setZnamky(znamky);
+                int addedStudentId = repository.pridejStudenta(student);
+                repository.upravZnamkyStudenta(addedStudentId, znamky);
+            } else {
+                System.out.println("Neznamy typ studenta.");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Soubor nenalezen: " + e.getMessage());
+        }
+    }
+
+    private void saveStudentToFile() {
+        int id = readInt("Zadejte ID studenta k ulozeni do souboru: ");
+        Student student = repository.nactiStudenta(id);
+        if (student != null) {
+            System.out.println("Ukladam studenta do souboru: " + student);
+
+            try {
+                FileWriter fileWriter = new FileWriter("student_" + id + ".txt");
+                fileWriter.write("ID: " + student.getId() + "\n");
+                fileWriter.write("Jmeno: " + student.getJmeno() + "\n");
+                fileWriter.write("Prijmeni: " + student.getPrijmeni() + "\n");
+                fileWriter.write("Rok narozeni: " + student.getRokNarozeni() + "\n");
+                fileWriter.write("Znamky: " + student.getZnamky() + "\n");
+                fileWriter.write("Studijni prumer: " + student.getStudijniPrumer() + "\n");
+                fileWriter.write("Typ: " + (student instanceof StudentTelekomunikaci ? "telekomunikace" : "kyberbezpecnost") + "\n");
+                fileWriter.write("Skill: " + student.zpracujSkill() + "\n");
+                fileWriter.close();
+                System.out.println("Student byl uspesne ulozen do souboru: " + "student_" + id + ".txt");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            System.out.println("Student nenalezen.");
+        }
+    }
+
     private void printMenu() {
         System.out.println("""
             ===== MENU =====
-            1. Přidat nového studenta
-            2. Zadat studentovi známku
-            3. Propustit studenta z univerzity
-            4. Vyhledat studenta dle ID
-            5. Spustit dovednost studenta
-            6. Výpis studentů abecedně podle skupin
-            7. Výpis průměrů podle oborů
-            8. Počet studentů ve skupinách
-            9. Uložit studenta do souboru
-            10. Načíst studenta ze souboru
+            1. Přidat nového studenta\t\t\t\t6. Výpis studentů abecedně podle příjmení
+            2. Zadat studentovi známku\t\t\t\t7. Výpis průměrů podle oborů
+            3. Propustit studenta z univerzity\t\t8. Počet studentů ve skupinách
+            4. Vyhledat studenta dle ID\t\t\t\t9. Uložit studenta do souboru
+            5. Spustit dovednost studenta\t\t\t10. Načíst studenta ze souboru
             0. Konec
             =================
             """);
     }
 
     private void addStudent() {
-        System.out.print("Zadej název skupiny: ");
+        scanner.nextLine();
+        System.out.print("Zadej nazev skupiny: ");
         String studentType = scanner.nextLine();
 
-        System.out.print("Zadej jméno: ");
+        System.out.print("Zadej jmeno: ");
         String firstName = scanner.nextLine();
 
-        System.out.print("Zadej příjmení: ");
+        System.out.print("Zadej prijmeni: ");
         String lastName = scanner.nextLine();
 
-        int year = readInt("Zadej rok narození: ");
+        int year = readInt("Zadej rok narozeni: ");
 
         Student student;
         if (studentType.equalsIgnoreCase("telekomunikace")) {
@@ -74,7 +167,7 @@ public class Controller {
         } else if (studentType.equalsIgnoreCase("kyberbezpecnost")) {
             student = new StudentKyberbezpecnosti(firstName, lastName, year);
         } else {
-            System.out.println("Neznámý typ studenta.");
+            System.out.println("Neznamy typ studenta.");
             return;
         }
 
@@ -88,14 +181,14 @@ public class Controller {
             System.out.println("Student nenalezen.");
             return;
         }
-        int grade = readInt("Zadej známku: ");
+        int grade = readInt("Zadej znamku: ");
         repository.pridejZnamku(id, grade);
     }
 
     private void expelStudent() {
         int id = readInt("Zadej ID studenta: ");
         repository.smazatStudenta(id);
-        System.out.println("Student byl úspěšně odstraněn.");
+        System.out.println("Student byl uspesne odstranen.");
     }
 
     private void findStudentById() {
@@ -112,13 +205,14 @@ public class Controller {
         int id = readInt("Zadej ID studenta: ");
         Student student = repository.nactiStudenta(id);
         if (student != null) {
-            student.zpracujIdentitu();
+            System.out.println("Vybran student: " + student);
+            System.out.println("Skill studenta: " + student.zpracujSkill());
         } else {
             System.out.println("Student nenalezen.");
         }
     }
 
-    private void printSortedStudentsInGroups() {
+    private void printSortedStudentsByLastName() {
         for (Student student : repository.nactiVsechnyStudenty()) {
             if (student == null) {
                 System.out.println("Student nenalezen.");
@@ -128,16 +222,16 @@ public class Controller {
         }
     }
 
-    private void printAverageGradesByField() {
-        System.out.println("Průměrné známky podle oborů:");
+    private void printAverageGradesOfField() {
+        System.out.println("Prumerne znamky podle oboru:");
         System.out.println("Telekomunikace: " + repository.prumerneZnamkyPodleOboru("telekomunikace"));
-        System.out.println("Kyberbezpečnost: " + repository.prumerneZnamkyPodleOboru("kyberbezpecnost"));
+        System.out.println("Kyberbezpecnost: " + repository.prumerneZnamkyPodleOboru("kyberbezpecnost"));
     }
 
     private void printStudentCountsInGroups() {
-        System.out.println("Počet studentů ve skupinách:");
+        System.out.println("Pocet studentu ve skupinach:");
         System.out.println("Telekomunikace: " + repository.pocetStudentuVeSkupine("telekomunikace"));
-        System.out.println("Kyberbezpečnost: " + repository.pocetStudentuVeSkupine("kyberbezpecnost"));
+        System.out.println("Kyberbezpecnost: " + repository.pocetStudentuVeSkupine("kyberbezpecnost"));
     }
 
     private int readInt(String prompt) {

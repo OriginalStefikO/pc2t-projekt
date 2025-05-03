@@ -20,12 +20,13 @@ public class StudentKyberbezpecnosti extends Student {
             }
             return hex.toString();
         } catch (NoSuchAlgorithmException e) {
-            return "ERROR";
+            System.out.println("Chyba při hashování: " + e.getMessage());
+            return null;
         }
     }
 
     @Override
-    public String zpracujIdentitu() {
+    public String zpracujSkill() {
         return hashName(jmeno + prijmeni);
     }
 }

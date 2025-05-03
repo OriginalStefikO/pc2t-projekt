@@ -39,7 +39,7 @@ public class StudentTelekomunikaci extends Student {
     }
 
     @Override
-    public String zpracujIdentitu() {
+    public String zpracujSkill() {
         return toMorse(jmeno + " " + prijmeni);
     }
 }
