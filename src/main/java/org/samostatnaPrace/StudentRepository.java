@@ -25,15 +25,15 @@ public class StudentRepository {
                 if (generatedKeys.next()) {
                     int generatedId = generatedKeys.getInt(1);
                     student.setId(generatedId);
-                    System.out.println("Student byl úspěšně přidán s ID: " + generatedId);
+                    System.out.println("Student byl uspesne pridan s ID: " + generatedId);
                     return generatedId;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Chyba při ukládání studenta: " + e.getMessage());
+            System.out.println("Chyba pri ukladani studenta: " + e.getMessage());
         }
-        System.out.println("Chyba při přidávání studenta.");
+        System.out.println("Chyba pri pridavani studenta.");
         return -1;
     }
 
@@ -54,7 +54,7 @@ public class StudentRepository {
                 String typ = resultSet.getString("typ");
 
                 if (typ == null) {
-                    System.out.println("Neznámý typ studenta: " + typ);
+                    System.out.println("Neznamy typ studenta: " + typ);
                     return null;
                 }
 
@@ -62,7 +62,7 @@ public class StudentRepository {
                     case "telekomunikace" -> student = new StudentTelekomunikaci(jmeno, prijmeni, rokNarozeni);
                     case "kyberbezpecnost" -> student = new StudentKyberbezpecnosti(jmeno, prijmeni, rokNarozeni);
                     default -> {
-                        System.out.println("Neznámý typ studenta: " + typ);
+                        System.out.println("Neznamy typ studenta: " + typ);
                         return null;
                     }
                 }
@@ -72,7 +72,7 @@ public class StudentRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println("Chyba při načítání studenta: " + e.getMessage());
+            System.out.println("Chyba pri nacitani studenta: " + e.getMessage());
         }
 
         return student;
@@ -91,7 +91,7 @@ public class StudentRepository {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Chyba při aktualizaci studenta: " + e.getMessage());
+            System.out.println("Chyba pri aktualizaci studenta: " + e.getMessage());
         }
     }
 
@@ -113,7 +113,7 @@ public class StudentRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println("Chyba při aktualizaci známek: " + e.getMessage());
+            System.out.println("Chyba pri aktualizaci znamek: " + e.getMessage());
         }
     }
 
@@ -131,10 +131,10 @@ public class StudentRepository {
             stmtStudent.setInt(1, studentId);
             stmtStudent.executeUpdate();
 
-            System.out.println("Student s ID " + studentId + " byl úspěšně odstraněn.");
+            System.out.println("Student s ID " + studentId + " byl uspesne odstranen.");
 
         } catch (SQLException e) {
-            System.out.println("Chyba při mazání studenta: " + e.getMessage());
+            System.out.println("Chyba pri mazani studenta: " + e.getMessage());
         }
     }
 
@@ -149,7 +149,7 @@ public class StudentRepository {
             preparedStatement.setInt(2, znamka);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Chyba při ukládání známky: " + e.getMessage());
+            System.out.println("Chyba pri ukladani znamky: " + e.getMessage());
         }
     }
 
@@ -159,7 +159,7 @@ public class StudentRepository {
         } else if (student instanceof StudentKyberbezpecnosti) {
             return "kyberbezpecnost";
         } else {
-            throw new IllegalArgumentException("Neznámý typ studenta");
+            throw new IllegalArgumentException("Neznamy typ studenta");
         }
     }
 
@@ -180,7 +180,7 @@ public class StudentRepository {
 
                 Student student;
                 if (typ == null) {
-                    System.out.println("Neznámý typ studenta: " + typ);
+                    System.out.println("Neznamy typ studenta: " + typ);
                     continue;
                 }
 
@@ -188,7 +188,7 @@ public class StudentRepository {
                     case "telekomunikace" -> student = new StudentTelekomunikaci(jmeno, prijmeni, rokNarozeni);
                     case "kyberbezpecnost" -> student = new StudentKyberbezpecnosti(jmeno, prijmeni, rokNarozeni);
                     default -> {
-                        System.out.println("Neznámý typ studenta: " + typ);
+                        System.out.println("Neznamy typ studenta: " + typ);
                         continue;
                     }
                 }
@@ -198,7 +198,7 @@ public class StudentRepository {
                 studenti.add(student);
             }
         } catch (SQLException e) {
-            System.out.println("Chyba při načítání studentů: " + e.getMessage());
+            System.out.println("Chyba pri nacitani studentu: " + e.getMessage());
         }
 
         return studenti;
@@ -218,7 +218,7 @@ public class StudentRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println("Chyba při načítání známek: " + e.getMessage());
+            System.out.println("Chyba pri nacitani znamek: " + e.getMessage());
         }
     }
 
@@ -239,7 +239,7 @@ public class StudentRepository {
                 return String.valueOf(rs.getDouble("prumer"));
             }
         } catch (SQLException e) {
-            System.out.println("Chyba při výpočtu průměrné známky: " + e.getMessage());
+            System.out.println("Chyba pri vypoctu prumerne znamky: " + e.getMessage());
         }
 
         return null;
@@ -258,7 +258,7 @@ public class StudentRepository {
                 return String.valueOf(rs.getInt("pocet"));
             }
         } catch (SQLException e) {
-            System.out.println("Chyba při počítání studentů: " + e.getMessage());
+            System.out.println("Chyba pri pocitani studentu: " + e.getMessage());
         }
 
         return null;

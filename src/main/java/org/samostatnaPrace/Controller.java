@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class Controller {
-    private Scanner scanner = new Scanner(System.in);
-    private StudentRepository repository;
+    private final Scanner scanner = new Scanner(System.in);
+    private final StudentRepository repository;
 
     public Controller(StudentRepository repository) {
         this.repository = repository;
@@ -20,7 +20,7 @@ public class Controller {
     public void run() {
         while (true) {
             printMenu();
-            int choice = readInt("Zadejte číslo volby: ");
+            int choice = readInt("Zadejte cislo volby: ");
 
             switch (choice) {
                 case 1 -> addStudent();
@@ -34,17 +34,17 @@ public class Controller {
                 case 9 -> saveStudentToFile();
                 case 10 -> loadStudentFromFile();
                 case 0 -> {
-                    System.out.println("Ukončuji program.");
+                    System.out.println("Ukoncuji program.");
                     return;
                 }
-                default -> System.out.println("Neplatná volba.");
+                default -> System.out.println("Neplatna volba.");
             }
         }
     }
 
     private void loadStudentFromFile() {
         scanner.nextLine();
-        System.out.print("Zadejte název souboru pro načtení studenta: ");
+        System.out.print("Zadejte nazev souboru pro nacteni studenta: ");
         String nazevSouboru = scanner.nextLine();
 
         int studentId = -1;
@@ -138,11 +138,11 @@ public class Controller {
     private void printMenu() {
         System.out.println("""
             ===== MENU =====
-            1. Přidat nového studenta\t\t\t\t6. Výpis studentů abecedně podle příjmení
-            2. Zadat studentovi známku\t\t\t\t7. Výpis průměrů podle oborů
-            3. Propustit studenta z univerzity\t\t8. Počet studentů ve skupinách
-            4. Vyhledat studenta dle ID\t\t\t\t9. Uložit studenta do souboru
-            5. Spustit dovednost studenta\t\t\t10. Načíst studenta ze souboru
+            1. Pridat noveho studenta\t\t\t\t6. Vypis studentu abecedne podle prijmeni
+            2. Zadat studentovi znamku\t\t\t\t7. Vypis prumeru podle oboru
+            3. Propustit studenta z univerzity\t\t8. Pocet studentu ve skupinach
+            4. Vyhledat studenta dle ID\t\t\t\t9. Ulozit studenta do souboru
+            5. Spustit dovednost studenta\t\t\t10. Nacist studenta ze souboru
             0. Konec
             =================
             """);
@@ -237,19 +237,10 @@ public class Controller {
     private int readInt(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextInt()) {
-            System.out.print("Zadej číslo: ");
+            System.out.print("Zadej cislo: ");
             scanner.next();
         }
         return scanner.nextInt();
-    }
-
-    private double readDouble(String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextDouble()) {
-            System.out.print("Zadej číslo: ");
-            scanner.next();
-        }
-        return scanner.nextDouble();
     }
 }
 

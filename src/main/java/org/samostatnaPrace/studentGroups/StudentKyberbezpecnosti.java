@@ -20,7 +20,7 @@ public class StudentKyberbezpecnosti extends Student {
             }
             return hex.toString();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Chyba při hashování: " + e.getMessage());
+            System.out.println("Chyba pri hashovani: " + e.getMessage());
             return null;
         }
     }
